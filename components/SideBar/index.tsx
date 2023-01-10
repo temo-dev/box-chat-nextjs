@@ -141,7 +141,6 @@ const SideBar = () => {
     }
     closeNewConversationDialog();
   };
-  console.log(loggedInUser);
   return (
     <StyledContainer>
       <StyledHeader>

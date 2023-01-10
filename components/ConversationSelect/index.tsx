@@ -26,7 +26,6 @@ const ConversationSelect = ({
   const router = useRouter();
 
   const onSelectConversation = () => {
-    console.log(id);
     router.push(`/conversations/${id}`);
   };
 
