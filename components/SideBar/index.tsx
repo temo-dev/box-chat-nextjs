@@ -29,6 +29,14 @@ const StyledContainer = styled.div`
   max-width: 350px;
   overflow-y: scroll;
   border-right: 1px solid whitesmoke;
+  flex-grow: 1;
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 `;
 const StyledHeader = styled.div`
   display: flex;
@@ -66,6 +74,16 @@ const StyledUserAvatar = styled(Avatar)`
   :hover {
     opacity: 0.8;
   }
+`;
+
+const StyledNameUser = styled.div`
+  text-transform: uppercase;
+  font-weight: bold;
+  padding-left: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
 `;
 
 const SideBar = () => {
@@ -123,11 +141,27 @@ const SideBar = () => {
     }
     closeNewConversationDialog();
   };
+  console.log(loggedInUser);
   return (
     <StyledContainer>
       <StyledHeader>
         <Tooltip title={loggedInUser?.email || "User Email"} placement="right">
-          <StyledUserAvatar src={loggedInUser?.photoURL || ""} />
+          {loggedInUser?.photoURL ? (
+            <StyledUserAvatar src={loggedInUser.photoURL} />
+          ) : (
+            <StyledUserAvatar>
+              {(loggedInUser?.email && loggedInUser.email[0].toUpperCase()) ||
+                "User"}
+            </StyledUserAvatar>
+          )}
+        </Tooltip>
+        <Tooltip
+          title={loggedInUser?.displayName || "User Email"}
+          placement="top"
+        >
+          <StyledNameUser>
+            {loggedInUser && loggedInUser.displayName}
+          </StyledNameUser>
         </Tooltip>
         <div>
           <IconButton>
