@@ -19,7 +19,13 @@ import { auth, db } from "../../config/firebase";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { transformMeassage } from "../../utils/getMessagesInConversation";
 import Message from "../Message";
-import { KeyboardEventHandler, MouseEventHandler, useState } from "react";
+import {
+  KeyboardEventHandler,
+  MouseEventHandler,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   setDoc,
   serverTimestamp,
@@ -97,8 +103,14 @@ const EndOfMessagesForAutoScroll = styled.div`
 
 const ConversationSreen = ({ conversation, messages }: IProps) => {
   const [newMessage, setNewMessage] = useState("");
+  const endOfMessagesRef = useRef<HTMLDivElement>(null);
   const [loggedInUser, _loading, _error] = useAuthState(auth);
   const conversationUsers = conversation.users;
+
+  useEffect(() => {
+    //scroll to bottom
+    scrollToBottom();
+  }, []);
 
   const { recipient, recipientEmail } = useRecipient(conversationUsers);
   const router = useRouter();
@@ -143,6 +155,9 @@ const ConversationSreen = ({ conversation, messages }: IProps) => {
 
     //reset input
     setNewMessage("");
+
+    //scroll to bottom
+    scrollToBottom();
   };
 
   const sendMessageOnEnter: KeyboardEventHandler<HTMLInputElement> = (
@@ -159,6 +174,10 @@ const ConversationSreen = ({ conversation, messages }: IProps) => {
     event.preventDefault();
     if (!newMessage) return;
     addMessageToDbAndUpdateLastSeen();
+  };
+
+  const scrollToBottom = () => {
+    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -192,7 +211,7 @@ const ConversationSreen = ({ conversation, messages }: IProps) => {
       <StyledMessageContainer>
         {showMessages()}
         {/* for auto scroll to the end when a new message is sent */}
-        {/* <EndOfMessagesForAutoScroll ref={endOfMessagesRef} /> */}
+        <EndOfMessagesForAutoScroll ref={endOfMessagesRef} />
       </StyledMessageContainer>
 
       {/* Enter new message */}
